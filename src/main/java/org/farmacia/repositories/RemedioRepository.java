@@ -50,7 +50,7 @@ public class RemedioRepository {
 
 
     //removerRemedio(String nome, String farmaceutica): void -> Remove remédio x de farmaceutica y do sistema.
-    public static void removerRemedio(String nome, String farmaceutica) {
+    public static void removerRemedio(String nome) {
         ArrayList<Remedio> remediosPesquisados = encontrarPorNome(nome);
         if (!remediosPesquisados.isEmpty()) {
             for (Remedio remedio : remediosPesquisados) {

@@ -1,37 +1,32 @@
 package org.farmacia.entities;
 // aqui é a classe de Substancia no qual se criara o objeto
 public class Substancia {
-    public Tipo meuTipo;
-    public String nome_substancia;
+    public Tipo tipo;
+    public String nome;
     // o seu contrutor que cria o objeto
     public Substancia(Tipo tipo, String nome) {
-        this.meuTipo = tipo;
-        this.nome_substancia = nome;
+        this.tipo = tipo;
+        this.nome = nome;
     }
 
-    // os get e setter que são utilizados para manipular os atributos do objeto
-    public Tipo getMeuTipo() {
-        return meuTipo;
+    public Tipo getTipo() {
+        return tipo;
     }
 
-    public void setMeuTipo(Tipo meuTipo) {
-        this.meuTipo = meuTipo;
+    public void setTipo(Tipo tipo) {
+        this.tipo = tipo;
     }
 
     public String getNome() {
-        return nome_substancia;
+        return nome;
     }
 
     public void setNome(String nome) {
-        this.nome_substancia = nome;
+        this.nome = nome;
     }
 
-    // trata a resposta , trazendo  os atributos do objeto
     @Override
     public String toString() {
-        return "Substancia{" +
-                "meuTipo=" + meuTipo +
-                ", nome_substancia='" + nome_substancia + '\'' +
-                '}';
+        return nome + " ("+tipo+")";
     }
 }

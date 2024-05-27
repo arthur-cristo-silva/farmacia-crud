@@ -17,25 +17,23 @@ public class SubstanciaRepository {
     }
 
     //encontrarPorNome(String nome): ArrayList<Substancia> -> Pesquisa por um nome e retorna substancias com este nome
-    public static ArrayList<Substancia> encontrarPorNome(String nome) {
-        ArrayList<Substancia> substanciasPesquisados = new ArrayList<>();
+    public static Substancia encontrarPorNome(String nome) {
         for (Substancia substancia : substancias) {
-            if (Objects.equals(substancia.nome_substancia.toLowerCase(), nome.toLowerCase())) {
-                substanciasPesquisados.add(substancia);
+            if (Objects.equals(substancia.getNome().toLowerCase(), nome.toLowerCase())) {
+                return substancia;
             }
         }
-        return substanciasPesquisados;
+        return null;
     }
 
     //encontrarPorTipo(Tipo meuTipo): ArrayList<Substancia> -> Pesquisa por um Tipo e retorna tipo da substancia com este nome
-        public static ArrayList<Substancia> encontrarPorTipo(Tipo meuTipo) {
-            ArrayList<Substancia> substanciasPesquisados = new ArrayList<>();
+        public static Substancia encontrarPorTipo(Tipo meuTipo) {
             for (Substancia substancia : substancias) {
-                if (Objects.equals(substancia.meuTipo, meuTipo)) {
-                    substanciasPesquisados.add(substancia);
+                if (Objects.equals(substancia.getTipo(), meuTipo)) {
+                   return substancia;
                 }
             }
-            return substanciasPesquisados;
+            return null;
         }
 
     // encontrarTodosSubstancias(): ArrayList<Substancia> -> Retorna todos Substancias cadastrados,

@@ -28,4 +28,5 @@ public class RemedioInjetavel extends Remedio {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
+
 }

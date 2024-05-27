@@ -1,14 +1,13 @@
 package org.farmacia.menu;
+
 import java.util.Scanner;
 
 import org.farmacia.services.RemedioService;
 import org.farmacia.services.SubstanciaService;
 
-
-
 public class Menu {
 
-    public static void menuInicial(){
+    public static void menuInicial() {
         int respostaMenuInicial;
         Scanner sc1 = new Scanner(System.in);
         System.out.println(" ");
@@ -27,14 +26,11 @@ public class Menu {
                 barraDePesquisa();
                 break;
             case 3:
-                System.out.println("Você escolheu sair do Sistema");
-                System.out.println("Bye Bitch");
+                System.out.println("Você escolheu sair do sistema...");
                 sc1.close();
                 break;
-
         }
     }
-
 
     //Menu de Cadastro
     public static void menuCadastro() {
@@ -51,9 +47,7 @@ public class Menu {
         System.out.println(" ");
         System.out.println("[1] - Remedio");
         System.out.println("[2] - Substância");
-        System.out.println("[3] - Farmaceutica");
-        System.out.println("[4] - Representante");
-        System.out.println("[5] - Voltar ao Menu Inicial");
+        System.out.println("[3 - Voltar ao Menu Inicial");
         respostaMenuCadastro = sc2.nextInt();
         switch (respostaMenuCadastro) {
             case 1:
@@ -65,17 +59,8 @@ public class Menu {
                 menuInicial();
                 break;
             case 3:
-                System.out.println("Você escolheu a opção 3- Farmaceutica");
                 menuInicial();
                 break;
-            case 4:
-                RepresentanteService.cadastrarRepresentante(dados);
-                menuInicial();
-                break;
-            case 5:
-                menuInicial();
-                break;
-
         }
     }
 
@@ -101,12 +86,10 @@ public class Menu {
             case 3:
                 menuInicial();
                 break;
-
         }
     }
 
-
-    public static void listagem (){
+    public static void listagem() {
         int respostaListagem;
         Scanner sc4 = new Scanner(System.in);
         System.out.println(" ");
@@ -114,9 +97,7 @@ public class Menu {
         System.out.println(" ----------------------");
         System.out.println("[1] - Remedio");
         System.out.println("[2] - Substância");
-      //  System.out.println("[3] - Farmaceutica");
-       // System.out.println("[4] - Representante");
-        System.out.println("[5] - Voltar ao Menu Inicial");
+        System.out.println("[3] - Voltar ao Menu Inicial");
         respostaListagem = sc4.nextInt();
         switch (respostaListagem) {
             case 1:
@@ -127,51 +108,22 @@ public class Menu {
                 SubstanciaService.listarSubstancias();
                 menuInicial();
                 break;
-            case 5:
+            case 3:
                 System.out.println("Você escolheu a opção 5- Voltar Ao Menu Inicial");
                 menuInicial();
                 break;
-
         }
-
     }
 
-
-    public static void pesquisa (){
+    public static void pesquisa() {
         int respostaPesquisa;
         Scanner sc5 = new Scanner(System.in);
         Scanner atributo = new Scanner(System.in);
         System.out.println(" ");
         System.out.println(" Pesquisa de Remedios por Atributos  ");
         System.out.println(" ----------------------");
-        System.out.println("[1] - Nome");
-        System.out.println("[2] - Substância");
-        System.out.println("[3] - Validade");
-        // System.out.println("[4] - Representante");
-        System.out.println("[5] - Voltar ao Menu Inicial");
-        respostaPesquisa = sc5.nextInt();
-        switch (respostaPesquisa) {
-            case 1:
-
-                RemedioService.buscarRemedioPorNome(atributo);
-                menuInicial();
-                break;
-            case 2:
-                RemedioService.buscarRemedioPorSubstancia(atributo);
-                menuInicial();
-                break;
-            case 3:
-                System.out.println("Digite a data de validade (formato AAAA-MM-DD):");
-                RemedioService.buscarRemedioPorValidade(sc5);
-                menuInicial();
-                break;
-            case 5:
-                System.out.println("Você escolheu a opção 5- Voltar Ao Menu Inicial");
-                menuInicial();
-                break;
-        }
+        RemedioService.buscarRemedioPorNome(atributo);
+        menuInicial();
     }
-
-
 }
 

@@ -27,18 +27,22 @@ public class RemedioService {
         int quantidade = -1;
         float concentracao = -1;
         System.out.println("-- CADASTRAR NOVO REMÉDIO --");
-        ArrayList<Substancia> sub = null;
-        boolean subAdd = true;
-        while (subAdd) {
+        ArrayList<Substancia> sub = new ArrayList<>();
+        while (true) {
             try {
                 SubstanciaService.listarSubstancias();
                 System.out.print("Digite o nome da substância do remédio: ");
                 String subName = sc.nextLine();
-                sub.add(SubstanciaRepository.encontrarPorNome(subName).get(0));
+                Substancia substancia = SubstanciaRepository.encontrarPorNome(subName);
+                if (substancia != null) {
+                    sub.add(substancia);
+                } else {
+                    System.out.println("Substância não encontrada");
+                }
                 System.out.println("Você deseja adicionar outra substância? (S/N) ");
                 String opcao = sc.nextLine();
                 if (!opcao.equalsIgnoreCase("s")) {
-                    subAdd = false;
+                    break;
                 }
             } catch (IndexOutOfBoundsException e) {
                 System.out.println("  ");
@@ -84,10 +88,7 @@ public class RemedioService {
         }
         System.out.print("Qual é dosagem recomendada dele? ");
         String dosagem = sc.nextLine();
-        System.out.println("O remédio é: " +
-                "[1] Uso Oral," +
-                "[2] Uso Tópico," +
-                "[3] Injetável.");
+        System.out.printf("O remédio é:%n[1] Uso Oral,%n[2] Uso Tópico,%n[3] Injetável.%n>>> ");
         byte res = 0;
         while (res < 1 || res > 3) {
             try {
@@ -99,20 +100,13 @@ public class RemedioService {
                 System.out.println("Por favor, digite uma opção válida.");
             }
         }
-        switch (res) {
-            case 1:
-                RemedioOral remedioOral = new RemedioOral(sub, nome, date, quantidade, concentracao, dosagem);
-                RemedioRepository.save(remedioOral);
-                break;
-            case 2:
-                RemedioTopico remedioTopico = new RemedioTopico(sub, nome, date, quantidade, concentracao, dosagem);
-                RemedioRepository.save(remedioTopico);
-                break;
-            case 3:
-                RemedioInjetavel remedioInjetavel = new RemedioInjetavel(sub, nome, date, quantidade, concentracao, dosagem)
-                RemedioRepository.save(remedioInjetavel);
-                break;
-        }
+        Remedio remedio = switch (res) {
+            case 1 -> new RemedioOral(sub, nome, date, quantidade, concentracao, Uso.Oral, "3 ao dia", "Muito bala");
+            case 2 -> new RemedioTopico(sub, nome, date, quantidade, concentracao, Uso.Topico, "3 ao dia", "Muito bala");
+            case 3 -> new RemedioInjetavel(sub, nome, date, quantidade, concentracao, Uso.Injetavel, "3 ao dia", "Muito bala");
+            default -> null;
+        };
+        RemedioRepository.save(remedio);
         System.out.println("Remédio cadastrado!");
     }
 
@@ -120,12 +114,13 @@ public class RemedioService {
         ArrayList<Remedio> remedios = RemedioRepository.encontrarTodosRemedios();
         if (!remedios.isEmpty()) {
             System.out.print("REMÉDIOS CADASTRADOS ");
-            System.out.println("_".repeat(19));
-            System.out.printf("%-50s | %-12s | %-10s %n", "Substância", "Nome", "Vencimento");
+            System.out.println("_".repeat(25));
+            System.out.printf("%-20s | %-10s | %-10s %n", "Nome", "Uso", "Vencimento");
+            System.out.println("_".repeat(46));
             for (Remedio remedio : remedios) {
-                System.out.printf("%-50s | %-12s | %-10s %n", remedio.getSubstancias(), remedio.getNome_remedio(), remedio.getData_vencimento().format(formatter));
+                System.out.printf("%-20s | %-10s | %-10s %n", remedio.getNome_remedio(), remedio.getUso(), remedio.getData_vencimento().format(formatter));
             }
-            System.out.println("_".repeat(40));
+            System.out.println("_".repeat(46));
         } else {
             System.out.println("Remédios não encontrados.");
         }
@@ -137,48 +132,19 @@ public class RemedioService {
         ArrayList<Remedio> remedios = RemedioRepository.encontrarPorNome(nome);
         if (!remedios.isEmpty()) {
             System.out.println("Remédios com o nome " + nome + " ");
-            System.out.println("_".repeat(72));
-            System.out.printf("%-50s | %-12s | %-10s | %-12s | %-12s%n", "Substancia", "Nome", "Vencimento", "Quantidade", "Concentração");
+            System.out.println("_".repeat(61));
+            System.out.printf("%-20s | %-10s | %-10s | %-10s%n", "Nome", "Vencimento", "Quantidade", "Concentração");
+            System.out.println("_".repeat(61));
             for (Remedio remedio : remedios) {
-                System.out.printf("%-50s | %-12s | %-10s | %-12s | %-12s%n", remedio.getSubstancias(), remedio.getNome_remedio(), remedio.getData_vencimento().format(formatter), remedio.getQuantidade(), remedio.getConcentracao(), remedio.getDosagem, getDescricao);
+                System.out.printf("%-20s | %-10s | %-10s | %-10s%nUso: %-12s %s%n%nDescrição:%n%s%n", remedio.getNome_remedio(), remedio.getData_vencimento().format(formatter), remedio.getQuantidade(), remedio.getConcentracao(), remedio.getUso(), remedio.getDosagem(), remedio.getDescricao());
+                if (!remedio.getSubstancias().isEmpty()) {
+                    System.out.println("\nSubstâncias:");
+                    for (Substancia substancia : remedio.getSubstancias()) {
+                        System.out.println(substancia);
+                    }
+                }
             }
-            System.out.println("_".repeat(72));
-        } else {
-            System.out.println("Remédios não encontrados.");
-        }
-    }
-
-    public static void buscarRemedioPorValidade(Scanner sc) {
-        System.out.println("Pesquisar por validade:");
-        LocalDate date = getDate(sc);
-        sc.nextLine();
-        ArrayList<Remedio> remedios = RemedioRepository.encontrarPorValidade(date);
-        if (!remedios.isEmpty()) {
-            System.out.println("Remédios que vencem em " + date.format(formatter) + " ");
-            System.out.println("_".repeat(72));
-            System.out.printf("%-12s | %-12s | %-10s | %-12s | %-12s%n", "Substancia", "Nome", "Vencimento", "Quantidade", "Concentração");
-            for (Remedio remedio : remedios) {
-                System.out.printf("%-12s | %-12s | %-10s | %-12s | %-12s%n", remedio.nome_substancia, remedio.nome_remedio, remedio.data_vencimento.format(formatter), remedio.quantidade, remedio.concentracao);
-            }
-            System.out.println("_".repeat(72));
-        } else {
-            System.out.println("Remédios não encontrados.");
-        }
-    }
-
-    public static void buscarRemedioPorFarmaceutica(Scanner sc) {
-        System.out.print("Pesquisar por farmaceutica: ");
-        sc.nextLine();
-        String farmaceutica = sc.nextLine();
-        ArrayList<Remedio> remedios = RemedioRepository.encontrarPorFarmaceutica(farmaceutica);
-        if (!remedios.isEmpty()) {
-            System.out.println("Remédios da farmaceutica " + farmaceutica + " ");
-            System.out.println("_".repeat(72));
-            System.out.printf("%-12s | %-12s | %-10s | %-12s | %-12s%n", "Substancia", "Nome", "Vencimento", "Quantidade", "Concentração");
-            for (Remedio remedio : remedios) {
-                System.out.printf("%-12s | %-12s | %-10s | %-12s | %-12s%n", remedio.nome_substancia, remedio.nome_remedio, remedio.data_vencimento.format(formatter), remedio.quantidade, remedio.concentracao);
-            }
-            System.out.println("_".repeat(72));
+            System.out.println("_".repeat(61));
         } else {
             System.out.println("Remédios não encontrados.");
         }
@@ -188,12 +154,7 @@ public class RemedioService {
         System.out.println("-- ATUALIZAR REMÉDIO --");
         System.out.print("Insira o nome do remédio: ");
         String oldNome = sc.nextLine();
-        String oldFarmaceutica = "null";
         if (!RemedioRepository.encontrarPorNome(oldNome).isEmpty()) {
-            System.out.print("Insira a farmaceutica: ");
-            oldFarmaceutica = sc.nextLine();
-        }
-        if (!RemedioRepository.encontrarPorFarmaceutica(oldFarmaceutica).isEmpty()) {
             int quantidade = -1;
             float concentracao = -1;
             String farmaceuticaNome;
@@ -226,10 +187,7 @@ public class RemedioService {
                 }
             }
             sc.nextLine();
-            System.out.print("Digite o nome da farmaceutica: ");
-            farmaceuticaNome = sc.nextLine();
-            Farmaceutica farm = new Farmaceutica("placeholder", -1, farmaceuticaNome);
-            RemedioRepository.atualizarRemedio(oldNome, oldFarmaceutica, nome, date, quantidade, concentracao, farm);
+            RemedioRepository.atualizarRemedio(oldNome, nome, date, quantidade, concentracao);
             System.out.println("Remédio atualizado!");
         } else {
             System.out.println("Remédio não encontrado.");
@@ -240,13 +198,8 @@ public class RemedioService {
         System.out.println("-- REMOVER REMÉDIO --");
         System.out.print("Insira o nome do remédio: ");
         String nome = sc.nextLine();
-        String farmaceutica = "null";
         if (!RemedioRepository.encontrarPorNome(nome).isEmpty()) {
-            System.out.print("Insira a farmaceutica: ");
-            farmaceutica = sc.nextLine();
-        }
-        if (!RemedioRepository.encontrarPorFarmaceutica(farmaceutica).isEmpty()) {
-            RemedioRepository.removerRemedio(nome, farmaceutica);
+            RemedioRepository.removerRemedio(nome);
             System.out.println("Remédio removido com sucesso!");
         } else {
             System.out.println("Remédio não encontrado.");
@@ -299,23 +252,4 @@ public class RemedioService {
         }
         return LocalDate.of(ano, mes, dia);
     }
-
-    public static void buscarRemedioPorSubstancia(Scanner sc) {
-        System.out.print("Pesquisar por substancia: ");
-        sc.nextLine();
-        String substancia = sc.nextLine();
-        ArrayList<Remedio> remedios = RemedioRepository.encontrarPorSubstancia(substancia);
-        if (!remedios.isEmpty()) {
-            System.out.println("Remédios com a substancia " + substancia + " ");
-            System.out.println("_".repeat(72));
-            System.out.printf("%-12s | %-12s | %-10s | %-12s | %-12s%n", "Substancia", "Nome", "Vencimento", "Quantidade", "Concentração");
-            for (Remedio remedio : remedios) {
-                System.out.printf("%-12s | %-12s | %-10s | %-12s | %-12s%n", remedio.nome_substancia, remedio.nome_remedio, remedio.data_vencimento.format(formatter), remedio.quantidade, remedio.concentracao);
-            }
-            System.out.println("_".repeat(72));
-        } else {
-            System.out.println("Remédios não encontrados.");
-        }
-    }
-
 }

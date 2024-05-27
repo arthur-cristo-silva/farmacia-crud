@@ -35,12 +35,10 @@ public class SubstanciaService {
     public static void encontrarPorNome(Scanner sc) {
         System.out.print("Pesquisar pelo nome: ");
         String nome = sc.nextLine();
-        ArrayList<Substancia> substancias = SubstanciaRepository.encontrarPorNome(nome);
-        if (!substancias.isEmpty()) {
-            for (Substancia substancia : substancias) {
-                System.out.printf("%-12s | %-12s%n", "Nome", "Tipo");
-                System.out.printf("%-12s | %-12s%n", substancia.getNome(), substancia.getMeuTipo());
-            }
+        Substancia sub = SubstanciaRepository.encontrarPorNome(nome);
+        if (sub != null) {
+            System.out.printf("%-12s | %-12s%n", "Nome", "Tipo");
+            System.out.printf("%-12s | %-12s%n", sub.getNome(), sub.getTipo());
         } else {
             System.out.println("Nenhuma substancia com este nome foi encontrada.");
         }
@@ -48,12 +46,10 @@ public class SubstanciaService {
 
     public static void encontrarPorTipo(Scanner sc) {
         System.out.println("Pesquisar pelo tipo: ");
-        ArrayList<Substancia> substancias = SubstanciaRepository.encontrarPorTipo(getTipo(sc));
-        if (!substancias.isEmpty()) {
-            for (Substancia substancia : substancias) {
-                System.out.printf("%-12s | %-12s%n", "Nome", "Tipo");
-                System.out.printf("%-12s | %-12s%n", substancia.getNome(), substancia.getMeuTipo());
-            }
+        Substancia substancia = SubstanciaRepository.encontrarPorTipo(getTipo(sc));
+        if (substancia != null) {
+            System.out.printf("%-12s | %-12s%n", "Nome", "Tipo");
+            System.out.printf("%-12s | %-12s%n", substancia.getNome(), substancia.getTipo());
         } else {
             System.out.println("Nenhuma substancia com este tipo foi encontrada.");
         }
@@ -74,7 +70,8 @@ public class SubstanciaService {
         System.out.print("-> ");
         try {
             tipoEscolha = Byte.parseByte(sc.nextLine());
-        } catch (NumberFormatException ignored) {}
+        } catch (NumberFormatException ignored) {
+        }
         tipo = switch (tipoEscolha) {
             case 1 -> Tipo.Alzheimer_Demencia;
             case 2 -> Tipo.Antidrepressivo;
